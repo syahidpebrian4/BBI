@@ -40,8 +40,13 @@ if submitted:
         ws['F23'] = rencana_transaksi.strftime("%d %b %Y")
         
         # Format Angka (Tanpa pemisah ribuan)
-        for cell in ['F19', 'F20', 'F21']:
-            ws[cell].number_format = '0'
+        # --- FORMAT ANGKA ---
+            # Format: 'Rp #,##0' akan menampilkan "Rp 210.000.000" secara otomatis di Excel
+            format_rupiah = 'Rp #,##0'
+            
+            ws['F19'].number_format = format_rupiah
+            ws['F20'].number_format = format_rupiah
+            ws['F21'].number_format = format_rupiah
             
         # Simpan ke memori
         buffer = BytesIO()
