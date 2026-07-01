@@ -1,5 +1,6 @@
 import streamlit as st
 import openpyxl
+from openpyxl.styles import Alignment  # Tambahkan baris ini
 from io import BytesIO
 import os
 
@@ -21,7 +22,6 @@ with st.form("memo_form"):
     submitted = st.form_submit_button("Generate Draft Memo")
 
 if submitted:
-    # Cek apakah file template ada
     template_path = "Draft_Memo_Template.xlsx" 
     if not os.path.exists(template_path):
         st.error(f"File {template_path} tidak ditemukan di folder!")
@@ -29,26 +29,26 @@ if submitted:
         wb = openpyxl.load_workbook(template_path)
         ws = wb.active
         
-        # Mapping Data ke Sel
+        # Mapping Data
         ws['D6'] = no_memo
         ws['D8'] = no_po
         ws['F18'] = jml_artikel
-        
-        # Pindah ke kolom G (baris 19-21)
         ws['G19'] = harga_jual
         ws['G20'] = biaya_delivery
         ws['G21'] = total_transfer
-        
         ws['F22'] = lokasi_transaksi
         ws['F23'] = rencana_transaksi.strftime("%d %b %Y")
         
-        # Format Angka (Number Format - pemisah ribuan)
-        # Menggunakan format '#,##0' agar terlihat sebagai angka dengan pemisah ribuan
+        # --- FORMAT ANGKA & RATA KIRI ---
         format_number = '#,##0'
-            
-        ws['G19'].number_format = format_number
-        ws['G20'].number_format = format_number
-        ws['G21'].number_format = format_number
+        rata_kiri = Alignment(horizontal='left')
+        
+        # Daftar sel yang ingin diformat
+        cells_to_format = ['G19', 'G20', 'G21']
+        
+        for cell in cells_to_format:
+            ws[cell].number_format = format_number
+            ws[cell].alignment = rata_kiri
             
         # Simpan ke memori
         buffer = BytesIO()
