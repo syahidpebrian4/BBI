@@ -11,26 +11,14 @@ from oauth2client.service_account import ServiceAccountCredentials
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
-st.markdown("""
-    <style>
-    /* Membuat header tetap di atas */
-    .header-fixed {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: white;
-        z-index: 999;
-        padding: 10px;
-        border-bottom: 2px solid #ddd;
-    }
-    /* Memberi jarak ke konten agar tidak tertutup */
-    .stApp {
-        padding-top: 100px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-st.markdown('<div class="header-fixed"><img src="https://i.imgur.com/logo.png" style="width: 200px;"></div>', unsafe_allow_html=True)
+# --- MENAMPILKAN LOGO LOKAL ---
+# Kita gunakan st.image dan CSS agar tidak double
+st.markdown('<div class="sticky-logo">', unsafe_allow_html=True)
+st.image("logo.png", use_container_width=True)
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Jarak agar konten tidak tertutup logo
+st.markdown('<div class="spacer"></div>', unsafe_allow_html=True)
 
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state:
