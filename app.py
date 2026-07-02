@@ -10,17 +10,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 # --- CONFIG ---
 
 st.set_page_config(page_title="Lotte Report Generator", layout="wide", initial_sidebar_state="expanded")
-
-def get_base64_image(image_path):
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    return None
-
-logo_b64 = get_base64_image("logo.png")
-
-
-# 3. Judul
 st.title("Input Data Memo Transaksi")
 
 # --- INISIALISASI SESSION STATE ---
