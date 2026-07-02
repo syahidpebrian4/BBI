@@ -12,20 +12,6 @@ st.image("logo.png")
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
-st.markdown("""
-    <style>
-    [data-testid="stForm"] {
-        border: 3px solid #FF0000 !important;
-        border-radius: 15px;
-        padding: 25px;
-    }
-    label {
-        color: #FF0000 !important;
-        font-weight: bold !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state:
     st.session_state.memo_data = None
