@@ -8,9 +8,6 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 # --- CONFIG ---
-st.set_page_config(page_title="Input Draft Memo", layout="centered")
-st.title("Input Data Memo Transaksi")
-
 # --- MENAMPILKAN LOGO LOKAL ---
 # Kita gunakan st.image dan CSS agar tidak double
 st.markdown('<div class="sticky-logo">', unsafe_allow_html=True)
@@ -19,6 +16,9 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 # Jarak agar konten tidak tertutup logo
 st.markdown('<div class="spacer"></div>', unsafe_allow_html=True)
+
+st.set_page_config(page_title="Input Draft Memo", layout="centered")
+st.title("Input Data Memo Transaksi")
 
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state:
