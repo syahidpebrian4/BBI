@@ -8,36 +8,14 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 # --- CONFIG ---
+# 1. Konfigurasi
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 
-# --- CSS FINAL: LOGO ANTENG, TANPA BORDER MERAH ---
-st.markdown("""
-    <style>
-    /* 1. Header Tetap (Logo tidak ikut scroll) */
-    .header-fixed {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: white;
-        z-index: 9999;
-        padding: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-    
-    /* 2. Jarak agar form tidak tertutup logo */
-    .stApp {
-        padding-top: 100px; 
-    }
-    </style>
-    """, unsafe_allow_html=True)
+# 2. Logo Resmi (Satu baris saja, tidak akan double, otomatis di atas)
+# Pastikan file logo.png ada di folder yang sama dengan app.py
+st.logo("logo.png", link="https://www.lottegrosir.co.id/")
 
-# --- LOGO (Panggil sekali!) ---
-# Pastikan file 'logo.png' ada di folder yang sama
-st.markdown('<div class="header-fixed"><img src="logo.png" width="200"></div>', unsafe_allow_html=True)
-
-# --- JUDUL & FORM ---
+# 3. Judul
 st.title("Input Data Memo Transaksi")
 
 # --- INISIALISASI SESSION STATE ---
