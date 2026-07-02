@@ -38,11 +38,11 @@ with st.form("memo_form"):
     no_po = st.text_input("No. PO")
     jml_artikel = st.number_input("Total jumlah artikel", min_value=0, step=1)
     
-    # Input harga di Streamlit menggunakan titik agar user mudah mengetik ratusan juta
+    # Input harga di Streamlit (pakai titik)
     harga_jual_str = st.text_input("Total Harga Jual Produk (contoh: 200.000.000)")
     biaya_delivery_str = st.text_input("Total Biaya Delivery (contoh: 100.000)")
     
-    # Konversi string dengan titik menjadi integer untuk perhitungan
+    # Konversi string ke int
     harga_jual = int(harga_jual_str.replace(".", "")) if harga_jual_str.replace(".", "").isdigit() else 0
     biaya_delivery = int(biaya_delivery_str.replace(".", "")) if biaya_delivery_str.replace(".", "").isdigit() else 0
     
@@ -54,7 +54,6 @@ with st.form("memo_form"):
     submitted = st.form_submit_button("Generate Draft Memo")
 
 if submitted:
-    # --- PROSES SIMPAN ---
     try:
         # Koneksi Google Sheets
         creds_dict = st.secrets["gcp_service_account"]
@@ -65,17 +64,17 @@ if submitted:
         
         new_no, no_memo = generate_memo_data(sheet, lokasi_transaksi)
         
-        # Data ke Google Sheets
+        # Save ke GSheet
         row_data = [new_no, str(tanggal_input), no_memo, no_po, jml_artikel, harga_jual, biaya_delivery, total_transfer, lokasi_transaksi, str(rencana_transaksi)]
         sheet.append_row(row_data)
         
         # --- PROSES EXCEL ---
         wb = openpyxl.load_workbook("Draft_Memo_Template.xlsx")
         ws = wb.active
-
+        
+        # Tanggal I6 (Jakarta, d MMMM yyyy)
         bulan_indo = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
-        str_tanggal = f"Jakarta, {tanggal_input.day} {bulan_indo[tanggal_input.month]} {tanggal_input.year}"
-        ws['I6'] = str_tanggal
+        ws['I6'] = f"Jakarta, {tanggal_input.day} {bulan_indo[tanggal_input.month]} {tanggal_input.year}"
         
         ws['D6'] = no_memo
         ws['D8'] = no_po
@@ -84,10 +83,12 @@ if submitted:
         ws['G20'] = biaya_delivery
         ws['G21'] = total_transfer
         ws['F22'] = lokasi_transaksi
-        ws['F23'] = str(rencana_transaksi)
-
+        
+        # Rencana Transaksi F23 (dd-mm-yyyy)
+        ws['F23'] = rencana_transaksi
         ws['F23'].number_format = 'dd-mm-yyyy'
 
+        # Format ribuan koma & Rata Kiri untuk G19, G20, G21
         for cell in ['G19', 'G20', 'G21']:
             ws[cell].number_format = '#,##0'
             ws[cell].alignment = Alignment(horizontal='left')
@@ -95,7 +96,6 @@ if submitted:
         output = BytesIO()
         wb.save(output)
         
-        # Simpan ke session state
         st.session_state.memo_data = no_memo
         st.session_state.excel_buffer = output.getvalue()
         st.session_state.file_name = f"Draft Memo_{new_no}.xlsx"
@@ -103,12 +103,6 @@ if submitted:
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
 
-# --- TAMPILAN HASIL ---
 if st.session_state.memo_data:
     st.success(f"Berhasil! Nomor Memo: {st.session_state.memo_data}")
-    st.download_button(
-        label="Download Excel", 
-        data=st.session_state.excel_buffer, 
-        file_name=st.session_state.file_name,
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+    st.download_button("Download Excel", st.session_state.excel_buffer, st.session_state.file_name)
