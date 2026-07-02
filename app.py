@@ -4,7 +4,6 @@ from openpyxl.styles import Alignment
 from io import BytesIO
 import os
 import gspread
-import time
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -12,9 +11,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
-# --- FUNGSI LOGIKA NOMOR MEMO (DIUPDATE) ---
+# --- FUNGSI LOGIKA NOMOR MEMO ---
 def generate_memo_data(sheet, lokasi_transaksi):
-    # Mapping Lokasi
     mapping_lokasi = {
         "Lotte Grosir Pasar Rebo": "01",
         "Lotte Grosir Kelapa Gading": "03",
@@ -22,29 +20,24 @@ def generate_memo_data(sheet, lokasi_transaksi):
     }
     kode_lokasi = mapping_lokasi.get(lokasi_transaksi, "00")
     
-    # Ambil semua data untuk menghitung nomor urut
     all_rows = sheet.get_all_values()
+    # Mencari nomor urut terakhir, abaikan header
+    last_no = 0
     if len(all_rows) > 1:
-        # Mengambil nilai kolom A (indeks 0) dari baris terakhir
-        last_val = all_rows[-1][0]
-        # Jika nilai adalah "0001", kita ambil angkanya saja
-        last_no = int(last_val) if last_val.isdigit() else 0
-    else:
-        last_no = 0
+        # Loop dari bawah untuk mencari angka valid pertama di kolom A
+        for row in reversed(all_rows[1:]):
+            if row[0] and row[0].isdigit():
+                last_no = int(row[0])
+                break
     
     new_no = last_no + 1
-    # Format nomor urut menjadi 0001, 0002, dst
     new_no_str = f"{new_no:04d}"
     
-    # Format Bulan Romawi
     bulan_romawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
     bulan = bulan_romawi[datetime.now().month]
     tahun = datetime.now().year
     
-    # Format No Memo: 0001/ST01/CDHO/VII/2026
-    # Sesuai permintaan: [No urut]/ST[Lokasi]/CDHO/[Bulan]/[Tahun]
     no_memo = f"{new_no_str}/ST{kode_lokasi}/CDHO/{bulan}/{tahun}"
-    
     return new_no_str, no_memo
 
 # --- FUNGSI GOOGLE SHEETS ---
@@ -55,8 +48,7 @@ def save_to_sheets(data):
     client = gspread.authorize(creds)
     sheet = client.open("Draft Memo BBI").sheet1
     
-    # Generate nomor
-    new_no, no_memo = generate_memo_data(sheet, data[7]) # index 7 adalah lokasi
+    new_no, no_memo = generate_memo_data(sheet, data[7])
     data[0] = new_no
     data[1] = no_memo
     
@@ -77,29 +69,43 @@ with st.form("memo_form"):
 if submitted:
     data_to_save = ["", "", no_po, jml_artikel, harga_jual, biaya_delivery, total_transfer, lokasi_transaksi, str(rencana_transaksi)]
     
-    new_no, no_memo = save_to_sheets(data_to_save)
-    
-    # Proses Excel
-    template_path = "Draft_Memo_Template.xlsx"
-    wb = openpyxl.load_workbook(template_path, keep_vba=True)
-    ws = wb.active
-    
-    ws['D6'] = no_memo
-    ws['D8'] = no_po
-    ws['F18'] = jml_artikel
-    ws['G19'] = harga_jual
-    ws['G20'] = biaya_delivery
-    ws['G21'] = total_transfer
-    ws['F22'] = lokasi_transaksi
-    ws['F23'] = rencana_transaksi.strftime("%d %b %Y")
-    
-    for cell in ['G19', 'G20', 'G21']:
-        ws[cell].number_format = '#,##0'
-        ws[cell].alignment = Alignment(horizontal='left')
+    try:
+        new_no, no_memo = save_to_sheets(data_to_save)
         
-    buffer = BytesIO()
-    wb.save(buffer)
-    buffer.seek(0)
-    
-    st.success(f"Berhasil! Memo: {no_memo}")
-    st.download_button("Download Excel", buffer, f"Memo_{no_memo.replace('/', '-')}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        template_path = "Draft_Memo_Template.xlsx"
+        if not os.path.exists(template_path):
+            st.error(f"Template {template_path} tidak ditemukan!")
+        else:
+            wb = openpyxl.load_workbook(template_path, keep_vba=True)
+            ws = wb.active
+            
+            ws['D6'] = no_memo
+            ws['D8'] = no_po
+            ws['F18'] = jml_artikel
+            ws['G19'] = harga_jual
+            ws['G20'] = biaya_delivery
+            ws['G21'] = total_transfer
+            ws['F22'] = lokasi_transaksi
+            ws['F23'] = rencana_transaksi.strftime("%d %b %Y")
+            
+            for cell in ['G19', 'G20', 'G21']:
+                ws[cell].number_format = '#,##0'
+                ws[cell].alignment = Alignment(horizontal='left')
+                
+            buffer = BytesIO()
+            wb.save(buffer)
+            buffer.seek(0)
+            
+            st.success(f"Berhasil! Memo: {no_memo}")
+            
+            # Membersihkan nama file dari karakter '/' agar tidak corrupt di Windows
+            clean_filename = f"Memo_{no_memo.replace('/', '-')}.xlsx"
+            
+            st.download_button(
+                label="Download Excel",
+                data=buffer,
+                file_name=clean_filename,
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+    except Exception as e:
+        st.error(f"Terjadi kesalahan: {e}")
