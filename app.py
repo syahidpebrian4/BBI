@@ -10,6 +10,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 # --- CONFIG ---
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
+st.image("logo.png", width=300)
 
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state:
