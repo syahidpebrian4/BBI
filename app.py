@@ -8,33 +8,23 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 # --- CONFIG ---
-st.image("logo.png", use_container_width=True)
+st.logo("logo.png")
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
-# 1. Masukkan CSS untuk membuat logo 'Sticky'
 st.markdown("""
     <style>
-    .sticky-logo {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: white; /* Warna background agar tidak transparan */
-        z-index: 9999;           /* Memastikan logo selalu di depan */
-        padding: 0px;
+    [data-testid="stForm"] {
+        border: 3px solid #FF0000 !important;
+        border-radius: 15px;
+        padding: 25px;
     }
-    /* Memberi jarak di atas konten agar tidak tertutup logo */
-    .stApp {
-        margin-top: 100px; 
+    label {
+        color: #FF0000 !important;
+        font-weight: bold !important;
     }
     </style>
     """, unsafe_allow_html=True)
-
-# 2. Tampilkan logo dengan pembungkus div class="sticky-logo"
-st.markdown('<div class="sticky-logo">', unsafe_allow_html=True)
-st.image("logo.png", use_container_width=True)
-st.markdown('</div>', unsafe_allow_html=True)
 
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state:
