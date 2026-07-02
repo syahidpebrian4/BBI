@@ -12,17 +12,6 @@ st.image("logo.png", use_container_width=True)
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
-st.markdown("""
-    <style>
-    /* Mengubah warna border kotak form secara keseluruhan */
-    [data-testid="stForm"] {
-        border: 2px solid #FF0000 !important;
-        border-radius: 10px;
-        padding: 20px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state:
     st.session_state.memo_data = None
