@@ -85,8 +85,8 @@ if submitted:
         ws['F22'] = lokasi_transaksi
         
         # Rencana Transaksi F23 (dd-mm-yyyy)
-        ws['F23'] = rencana_transaksi
-        ws['F23'].number_format = 'dd-mm-yyyy'
+        tanggal_str = rencana_transaksi.strftime("%d-%m-%Y") 
+        ws['F23'] = tanggal_str
 
         # Format ribuan koma & Rata Kiri untuk G19, G20, G21
         for cell in ['G19', 'G20', 'G21']:
