@@ -8,11 +8,17 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 # --- CONFIG ---
-# 1. Konfigurasi
-st.set_page_config(page_title="Input Draft Memo", layout="centered")
 
-# 2. Logo Resmi (Satu baris saja, tidak akan double, otomatis di atas)
-st.logo("logo.png")
+st.set_page_config(page_title="Lotte Report Generator", layout="wide", initial_sidebar_state="expanded")
+
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return None
+
+logo_b64 = get_base64_image("lotte_logo.png")
+
 
 # 3. Judul
 st.title("Input Data Memo Transaksi")
