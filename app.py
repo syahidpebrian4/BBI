@@ -8,16 +8,36 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 # --- CONFIG ---
-# --- MENAMPILKAN LOGO LOKAL ---
-# Kita gunakan st.image dan CSS agar tidak double
-st.markdown('<div class="sticky-logo">', unsafe_allow_html=True)
-st.image("logo.png", use_container_width=True)
+st.set_page_config(page_title="Input Draft Memo", layout="centered")
+
+# --- CSS SAKTI BIAR LOGO GAK IKUT SCROLL ---
+st.markdown("""
+    <style>
+    /* Bikin Header Logo nempel */
+    .header-fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 9999;
+        padding: 5px;
+        border-bottom: 2px solid #FF0000; /* Garis merah biar manis */
+    }
+    
+    /* Kasih jarak biar konten gak ketutupan logo */
+    .main .block-container {
+        padding-top: 100px; 
+    }
+
+    """, unsafe_allow_html=True)
+
+# --- LOGO (Panggil sekali saja di sini) ---
+# Kita pakai st.image di dalam div class biar dia "ngunci" di atas
+st.markdown('<div class="header-fixed">', unsafe_allow_html=True)
+st.image("logo.png", width=250) # Atur width sesuai keinginanmu
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Jarak agar konten tidak tertutup logo
-st.markdown('<div class="spacer"></div>', unsafe_allow_html=True)
-
-st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
 # --- INISIALISASI SESSION STATE ---
