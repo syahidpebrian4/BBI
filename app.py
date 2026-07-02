@@ -86,6 +86,8 @@ if submitted:
         ws['F22'] = lokasi_transaksi
         ws['F23'] = str(rencana_transaksi)
 
+        ws['F23'].number_format = 'dd-mm-yyyy'
+
         for cell in ['G19', 'G20', 'G21']:
             ws[cell].number_format = '#,##0'
             ws[cell].alignment = Alignment(horizontal='left')
