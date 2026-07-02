@@ -92,21 +92,23 @@ if submitted:
                 ws[cell].number_format = '#,##0'
                 ws[cell].alignment = Alignment(horizontal='left')
                 
-            buffer = BytesIO()
-            wb.save(buffer)
-            buffer.seek(0)
-            
-            st.success(f"Berhasil! Memo: {no_memo}")
-            
-            # --- UBAH BAGIAN INI ---
-            # Menggunakan new_no (nomor urut) untuk nama file
-            clean_filename = f"Draft Memo_{new_no}.xlsx"
-            
-            st.download_button(
-                label="Download Excel",
-                data=buffer,
-                file_name=clean_filename,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+           # ... (setelah mengisi sel wb)
+        
+        # PENTING: Gunakan BytesIO()
+        buffer = BytesIO()
+        wb.save(buffer)
+        
+        # Ambil data dalam bentuk bytes
+        excel_data = buffer.getvalue()
+        
+        st.success(f"Berhasil! Memo: {no_memo}")
+        
+        # Gunakan 'excel_data' langsung di tombol download
+        st.download_button(
+            label="Download Excel",
+            data=excel_data,
+            file_name=f"Draft Memo_{new_no}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
