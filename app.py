@@ -85,19 +85,16 @@ if submitted:
         ws['D6'] = no_memo
         ws['D8'] = no_po
         ws['F18'] = jml_artikel
-        ws['G19'] = harga_jual
-        ws['G20'] = biaya_delivery
-        ws['G21'] = total_transfer
-        ws['F22'] = lokasi_transaksi
-        ws['F23'] = str(rencana_transaksi)
-
         ws['G19'] = int(harga_jual)
         ws['G20'] = int(biaya_delivery)
         ws['G21'] = int(total_transfer)
+        ws['F22'] = lokasi_transaksi
+        ws['F23'] = str(rencana_transaksi)
+
         
         # Format angka di Excel
         for cell in ['G19', 'G20', 'G21']:
-            ws[cell].number_format = '#.##0'
+            ws[cell].number_format = '#,##0'
             
         output = BytesIO()
         wb.save(output)
