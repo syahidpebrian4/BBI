@@ -12,30 +12,6 @@ st.image("logo.png", use_container_width=True)
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
-st.markdown("""
-    <style>
-    /* Mengunci posisi logo agar tidak ikut scroll */
-    .sticky-logo {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 999;
-        background-color: white; /* Memberi warna background agar tidak transparan */
-        padding: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Memberi sedikit bayangan agar terlihat rapi */
-    }
-    
-    /* Memberi jarak atas pada konten agar tidak tertutup logo */
-    .stApp {
-        margin-top: 80px; 
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Menampilkan logo dengan class CSS di atas
-st.markdown('<div class="sticky-logo"><img src="data:image/png;base64,..." style="width:100%"></div>', unsafe_allow_html=True)
-
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state:
     st.session_state.memo_data = None
