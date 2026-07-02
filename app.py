@@ -72,43 +72,42 @@ if submitted:
     try:
         new_no, no_memo = save_to_sheets(data_to_save)
         
+        # --- PROSES EXCEL YANG DIBERSIHKAN ---
         template_path = "Draft_Memo_Template.xlsx"
-        if not os.path.exists(template_path):
-            st.error(f"Template {template_path} tidak ditemukan!")
+        
+        # 1. Load tanpa VBA untuk memastikan tidak ada konflik
+        wb = openpyxl.load_workbook(template_path)
+        ws = wb.active
+        
+        # 2. Paksa isi data ke string agar tidak ada error tipe data
+        ws['D6'] = str(no_memo)
+        ws['D8'] = str(no_po)
+        ws['F18'] = int(jml_artikel)
+        ws['G19'] = int(harga_jual)
+        ws['G20'] = int(biaya_delivery)
+        ws['G21'] = int(total_transfer)
+        ws['F22'] = str(lokasi_transaksi)
+        ws['F23'] = str(rencana_transaksi) 
+        
+        # 3. Format sel
+        for cell in ['G19', 'G20', 'G21']:
+            ws[cell].number_format = '#,##0'
+            ws[cell].alignment = Alignment(horizontal='left')
+            
+        # 4. Simpan ke BytesIO
+        output = BytesIO()
+        wb.save(output)
+        
+        # --- DEBUGGING: CEK APAKAH FILE KOSONG ---
+        file_size = output.tell()
+        if file_size == 0:
+            st.error("Error: File Excel yang dihasilkan kosong!")
         else:
-            wb = openpyxl.load_workbook(template_path, keep_vba=True)
-            ws = wb.active
-            
-            ws['D6'] = no_memo
-            ws['D8'] = no_po
-            ws['F18'] = jml_artikel
-            ws['G19'] = harga_jual
-            ws['G20'] = biaya_delivery
-            ws['G21'] = total_transfer
-            ws['F22'] = lokasi_transaksi
-            ws['F23'] = rencana_transaksi.strftime("%d %b %Y")
-            
-            for cell in ['G19', 'G20', 'G21']:
-                ws[cell].number_format = '#,##0'
-                ws[cell].alignment = Alignment(horizontal='left')
-                
-           # ... (setelah mengisi sel wb)
-        
-        # PENTING: Gunakan BytesIO()
-        buffer = BytesIO()
-        wb.save(buffer)
-        
-        # Ambil data dalam bentuk bytes
-        excel_data = buffer.getvalue()
-        
-        st.success(f"Berhasil! Memo: {no_memo}")
-        
-        # Gunakan 'excel_data' langsung di tombol download
-        st.download_button(
-            label="Download Excel",
-            data=excel_data,
-            file_name=f"Draft Memo_{new_no}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+            st.download_button(
+                label="Download Excel",
+                data=output.getvalue(),
+                file_name=f"Draft Memo_{new_no}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
