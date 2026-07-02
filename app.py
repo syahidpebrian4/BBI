@@ -10,10 +10,10 @@ from oauth2client.service_account import ServiceAccountCredentials
 # --- CONFIG ---
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 
-# --- CSS SAKTI BIAR LOGO GAK IKUT SCROLL ---
+# --- CSS FINAL: LOGO ANTENG, TANPA BORDER MERAH ---
 st.markdown("""
     <style>
-    /* Bikin Header Logo nempel */
+    /* 1. Header Tetap (Logo tidak ikut scroll) */
     .header-fixed {
         position: fixed;
         top: 0;
@@ -21,23 +21,23 @@ st.markdown("""
         width: 100%;
         background-color: white;
         z-index: 9999;
-        padding: 5px;
-        border-bottom: 2px solid #FF0000; /* Garis merah biar manis */
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
     }
     
-    /* Kasih jarak biar konten gak ketutupan logo */
-    .main .block-container {
+    /* 2. Jarak agar form tidak tertutup logo */
+    .stApp {
         padding-top: 100px; 
     }
-
+    </style>
     """, unsafe_allow_html=True)
 
-# --- LOGO (Panggil sekali saja di sini) ---
-# Kita pakai st.image di dalam div class biar dia "ngunci" di atas
-st.markdown('<div class="header-fixed">', unsafe_allow_html=True)
-st.image("logo.png", width=250) # Atur width sesuai keinginanmu
-st.markdown('</div>', unsafe_allow_html=True)
+# --- LOGO (Panggil sekali!) ---
+# Pastikan file 'logo.png' ada di folder yang sama
+st.markdown('<div class="header-fixed"><img src="logo.png" width="200"></div>', unsafe_allow_html=True)
 
+# --- JUDUL & FORM ---
 st.title("Input Data Memo Transaksi")
 
 # --- INISIALISASI SESSION STATE ---
