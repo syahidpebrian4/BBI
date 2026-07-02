@@ -8,7 +8,7 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 # --- CONFIG ---
-st.image("logo.png", width=300)
+st.image("logo.png", use_container_width=True)
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
