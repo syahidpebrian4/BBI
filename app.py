@@ -11,6 +11,14 @@ from oauth2client.service_account import ServiceAccountCredentials
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
+# --- INISIALISASI SESSION STATE ---
+if 'memo_data' not in st.session_state:
+    st.session_state.memo_data = None
+if 'excel_buffer' not in st.session_state:
+    st.session_state.excel_buffer = None
+if 'file_name' not in st.session_state:
+    st.session_state.file_name = None
+
 # --- FUNGSI LOGIKA NOMOR MEMO ---
 def generate_memo_data(sheet, lokasi_transaksi):
     mapping_lokasi = {
@@ -19,24 +27,18 @@ def generate_memo_data(sheet, lokasi_transaksi):
         "Lotte Grosir Ciputat": "06"
     }
     kode_lokasi = mapping_lokasi.get(lokasi_transaksi, "00")
-    
     all_rows = sheet.get_all_values()
-    # Mencari nomor urut terakhir, abaikan header
     last_no = 0
     if len(all_rows) > 1:
-        # Loop dari bawah untuk mencari angka valid pertama di kolom A
         for row in reversed(all_rows[1:]):
             if row[0] and row[0].isdigit():
                 last_no = int(row[0])
                 break
-    
     new_no = last_no + 1
     new_no_str = f"{new_no:04d}"
-    
     bulan_romawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
     bulan = bulan_romawi[datetime.now().month]
     tahun = datetime.now().year
-    
     no_memo = f"{new_no_str}/ST{kode_lokasi}/CDHO/{bulan}/{tahun}"
     return new_no_str, no_memo
 
@@ -47,11 +49,9 @@ def save_to_sheets(data):
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     sheet = client.open("Draft Memo BBI").sheet1
-    
     new_no, no_memo = generate_memo_data(sheet, data[7])
     data[0] = new_no
     data[1] = no_memo
-    
     sheet.append_row(data)
     return new_no, no_memo
 
@@ -68,18 +68,13 @@ with st.form("memo_form"):
 
 if submitted:
     data_to_save = ["", "", no_po, jml_artikel, harga_jual, biaya_delivery, total_transfer, lokasi_transaksi, str(rencana_transaksi)]
-    
     try:
         new_no, no_memo = save_to_sheets(data_to_save)
         
-        # --- PROSES EXCEL YANG DIBERSIHKAN ---
         template_path = "Draft_Memo_Template.xlsx"
-        
-        # 1. Load tanpa VBA untuk memastikan tidak ada konflik
         wb = openpyxl.load_workbook(template_path)
         ws = wb.active
         
-        # 2. Paksa isi data ke string agar tidak ada error tipe data
         ws['D6'] = str(no_memo)
         ws['D8'] = str(no_po)
         ws['F18'] = int(jml_artikel)
@@ -89,25 +84,27 @@ if submitted:
         ws['F22'] = str(lokasi_transaksi)
         ws['F23'] = str(rencana_transaksi) 
         
-        # 3. Format sel
         for cell in ['G19', 'G20', 'G21']:
             ws[cell].number_format = '#,##0'
             ws[cell].alignment = Alignment(horizontal='left')
             
-        # 4. Simpan ke BytesIO
         output = BytesIO()
         wb.save(output)
         
-        # --- DEBUGGING: CEK APAKAH FILE KOSONG ---
-        file_size = output.tell()
-        if file_size == 0:
-            st.error("Error: File Excel yang dihasilkan kosong!")
-        else:
-            st.download_button(
-                label="Download Excel",
-                data=output.getvalue(),
-                file_name=f"Draft Memo_{new_no}.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+        # Simpan ke Session State
+        st.session_state.memo_data = no_memo
+        st.session_state.excel_buffer = output.getvalue()
+        st.session_state.file_name = f"Draft Memo_{new_no}.xlsx"
+        
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
+# --- TAMPILAN HASIL (Selalu muncul jika ada data di session state) ---
+if st.session_state.memo_data:
+    st.success(f"Berhasil! Nomor Memo: {st.session_state.memo_data}")
+    st.download_button(
+        label="Download Excel",
+        data=st.session_state.excel_buffer,
+        file_name=st.session_state.file_name,
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
