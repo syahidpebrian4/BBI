@@ -86,7 +86,6 @@ if submitted:
         ws['F22'] = lokasi_transaksi
         ws['F23'] = str(rencana_transaksi)
 
-        # Format ribuan koma di Excel (#,##0)
         for cell in ['G19', 'G20', 'G21']:
             ws[cell].number_format = '#,##0'
             ws[cell].alignment = Alignment(horizontal='left')
