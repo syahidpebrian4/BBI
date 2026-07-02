@@ -72,6 +72,10 @@ if submitted:
         # --- PROSES EXCEL ---
         wb = openpyxl.load_workbook("Draft_Memo_Template.xlsx")
         ws = wb.active
+
+        bulan_indo = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+        str_tanggal = f"Jakarta, {tanggal_input.day} {bulan_indo[tanggal_input.month]} {tanggal_input.year}"
+        ws['I6'] = str_tanggal
         
         ws['D6'] = no_memo
         ws['D8'] = no_po
