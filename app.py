@@ -83,10 +83,6 @@ if submitted:
         ws['G20'] = biaya_delivery
         ws['G21'] = total_transfer
         ws['F22'] = lokasi_transaksi
-        
-        # Rencana Transaksi F23 (dd-mm-yyyy)
-        tanggal_str = rencana_transaksi.strftime("%d-%m-%Y") 
-        ws['F23'] = tanggal_str
 
         # Format ribuan koma & Rata Kiri untuk G19, G20, G21
         for cell in ['G19', 'G20', 'G21']:
