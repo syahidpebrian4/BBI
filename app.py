@@ -12,7 +12,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
-# --- FUNGSI LOGIKA NOMOR MEMO ---
+# --- FUNGSI LOGIKA NOMOR MEMO (DIUPDATE) ---
 def generate_memo_data(sheet, lokasi_transaksi):
     # Mapping Lokasi
     mapping_lokasi = {
@@ -24,24 +24,28 @@ def generate_memo_data(sheet, lokasi_transaksi):
     
     # Ambil semua data untuk menghitung nomor urut
     all_rows = sheet.get_all_values()
-    # Baris 1 header, baris 2 dst data
     if len(all_rows) > 1:
-        last_row = all_rows[-1]
-        last_no = int(last_row[0]) if last_row[0].isdigit() else 0
+        # Mengambil nilai kolom A (indeks 0) dari baris terakhir
+        last_val = all_rows[-1][0]
+        # Jika nilai adalah "0001", kita ambil angkanya saja
+        last_no = int(last_val) if last_val.isdigit() else 0
     else:
         last_no = 0
     
     new_no = last_no + 1
+    # Format nomor urut menjadi 0001, 0002, dst
+    new_no_str = f"{new_no:04d}"
     
     # Format Bulan Romawi
     bulan_romawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
     bulan = bulan_romawi[datetime.now().month]
     tahun = datetime.now().year
     
-    # Format No Memo: NO/ST01/CDHO/VII/2026
-    no_memo = f"NO/ST{kode_lokasi}/CDHO/{bulan}/{tahun}"
+    # Format No Memo: 0001/ST01/CDHO/VII/2026
+    # Sesuai permintaan: [No urut]/ST[Lokasi]/CDHO/[Bulan]/[Tahun]
+    no_memo = f"{new_no_str}/ST{kode_lokasi}/CDHO/{bulan}/{tahun}"
     
-    return str(new_no), no_memo
+    return new_no_str, no_memo
 
 # --- FUNGSI GOOGLE SHEETS ---
 def save_to_sheets(data):
