@@ -12,26 +12,6 @@ st.image("logo.png", use_container_width=True)
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
-st.markdown("""
-    <style>
-    /* Mengubah warna border input box menjadi merah */
-    div[data-baseweb="base-input"] {
-        border: 2px solid #FF0000 !important;
-        border-radius: 5px;
-    }
-    
-    /* Mengubah warna border selectbox dan number input */
-    div[data-baseweb="select"] > div {
-        border: 2px solid #FF0000 !important;
-    }
-    
-    /* Fokus saat diklik tetap merah */
-    div[data-baseweb="base-input"]:focus-within {
-        border: 2px solid #FF0000 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state:
     st.session_state.memo_data = None
