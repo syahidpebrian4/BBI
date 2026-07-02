@@ -9,7 +9,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 # --- CONFIG ---
 st.logo("lsi_logo.png")
-st.set_page_config(page_title="Lotte Report Generator", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Input Draft Memo", layout="centered")
 st.title("Input Data Memo Transaksi")
 
 # --- INISIALISASI SESSION STATE ---
