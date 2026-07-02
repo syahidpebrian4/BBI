@@ -90,6 +90,10 @@ if submitted:
         ws['G21'] = total_transfer
         ws['F22'] = lokasi_transaksi
         ws['F23'] = str(rencana_transaksi)
+
+        ws['G19'] = int(harga_jual)
+        ws['G20'] = int(biaya_delivery)
+        ws['G21'] = int(total_transfer)
         
         # Format angka di Excel
         for cell in ['G19', 'G20', 'G21']:
