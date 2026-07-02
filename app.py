@@ -20,12 +20,6 @@ st.markdown("""
         border-radius: 10px;
         padding: 20px;
     }
-    
-    /* Opsional: Mengubah warna label teks agar senada */
-    label {
-        color: #FF0000 !important;
-        font-weight: bold;
-    }
     </style>
     """, unsafe_allow_html=True)
 
