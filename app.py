@@ -17,7 +17,7 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
-logo_b64 = get_base64_image("lotte_logo.png")
+logo_b64 = get_base64_image("logo.png")
 
 
 # 3. Judul
