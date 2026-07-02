@@ -98,8 +98,9 @@ if submitted:
             
             st.success(f"Berhasil! Memo: {no_memo}")
             
-            # Membersihkan nama file dari karakter '/' agar tidak corrupt di Windows
-            clean_filename = f"Memo_{no_memo.replace('/', '-')}.xlsx"
+            # --- UBAH BAGIAN INI ---
+            # Menggunakan new_no (nomor urut) untuk nama file
+            clean_filename = f"Draft Memo_{new_no}.xlsx"
             
             st.download_button(
                 label="Download Excel",
