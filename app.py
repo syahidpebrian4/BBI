@@ -13,16 +13,7 @@ st.title("Input Data Memo Transaksi")
 # --- INISIALISASI SESSION STATE ---
 if 'memo_data' not in st.session_state: st.session_state.memo_data = None
 if 'excel_buffer' not in st.session_state: st.session_state.excel_buffer = None
-
-# --- FUNGSI PEMBANTU FORMAT RIBUAN ---
-def format_input_number(label):
-    val = st.text_input(label, value="0")
-    # Hapus titik agar bisa jadi integer untuk perhitungan
-    clean_val = val.replace(".", "")
-    try:
-        return int(clean_val)
-    except:
-        return 0
+if 'file_name' not in st.session_state: st.session_state.file_name = None
 
 # --- FUNGSI LOGIKA NOMOR MEMO ---
 def generate_memo_data(sheet, lokasi_transaksi):
@@ -47,11 +38,11 @@ with st.form("memo_form"):
     no_po = st.text_input("No. PO")
     jml_artikel = st.number_input("Total jumlah artikel", min_value=0, step=1)
     
-    # Input harga dengan trik pemisah ribuan
-    harga_jual_str = st.text_input("Total Harga Jual Produk", value="0")
-    biaya_delivery_str = st.text_input("Total Biaya Delivery", value="0")
+    # Input harga di Streamlit menggunakan titik agar user mudah mengetik ratusan juta
+    harga_jual_str = st.text_input("Total Harga Jual Produk (contoh: 200.000.000)")
+    biaya_delivery_str = st.text_input("Total Biaya Delivery (contoh: 100.000)")
     
-    # Konversi ke int
+    # Konversi string dengan titik menjadi integer untuk perhitungan
     harga_jual = int(harga_jual_str.replace(".", "")) if harga_jual_str.replace(".", "").isdigit() else 0
     biaya_delivery = int(biaya_delivery_str.replace(".", "")) if biaya_delivery_str.replace(".", "").isdigit() else 0
     
@@ -74,29 +65,32 @@ if submitted:
         
         new_no, no_memo = generate_memo_data(sheet, lokasi_transaksi)
         
-        # Data untuk kolom: No, Tanggal, No Memo, No PO, Total Artikel, Harga, Delivery, Total, Lokasi, Rencana
+        # Data ke Google Sheets
         row_data = [new_no, str(tanggal_input), no_memo, no_po, jml_artikel, harga_jual, biaya_delivery, total_transfer, lokasi_transaksi, str(rencana_transaksi)]
         sheet.append_row(row_data)
         
         # --- PROSES EXCEL ---
         wb = openpyxl.load_workbook("Draft_Memo_Template.xlsx")
         ws = wb.active
-        # Sesuaikan cell ini dengan template baru kamu setelah ada penambahan kolom
+        
         ws['D6'] = no_memo
         ws['D8'] = no_po
         ws['F18'] = jml_artikel
-        ws['G19'] = int(harga_jual)
-        ws['G20'] = int(biaya_delivery)
-        ws['G21'] = int(total_transfer)
+        ws['G19'] = harga_jual
+        ws['G20'] = biaya_delivery
+        ws['G21'] = total_transfer
         ws['F22'] = lokasi_transaksi
         ws['F23'] = str(rencana_transaksi)
 
-       for cell in ['G19', 'G20', 'G21']:
+        # Format ribuan koma di Excel (#,##0)
+        for cell in ['G19', 'G20', 'G21']:
             ws[cell].number_format = '#,##0'
-            ws[cell].alignment = Alignment(horizontal='left')
+            ws[cell].alignment = Alignment(horizontal='right')
             
         output = BytesIO()
         wb.save(output)
+        
+        # Simpan ke session state
         st.session_state.memo_data = no_memo
         st.session_state.excel_buffer = output.getvalue()
         st.session_state.file_name = f"Draft Memo_{new_no}.xlsx"
@@ -104,6 +98,12 @@ if submitted:
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
 
+# --- TAMPILAN HASIL ---
 if st.session_state.memo_data:
     st.success(f"Berhasil! Nomor Memo: {st.session_state.memo_data}")
-    st.download_button("Download Excel", st.session_state.excel_buffer, st.session_state.file_name)
+    st.download_button(
+        label="Download Excel", 
+        data=st.session_state.excel_buffer, 
+        file_name=st.session_state.file_name,
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
