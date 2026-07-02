@@ -12,9 +12,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 st.set_page_config(page_title="Input Draft Memo", layout="centered")
 
 # 2. Logo Resmi (Satu baris saja, tidak akan double, otomatis di atas)
-# Pastikan file logo.png ada di folder yang sama dengan app.py
-with st.container():
-    st.image("logo.png", use_container_width=True)
+st.logo("logo.png")
 
 # 3. Judul
 st.title("Input Data Memo Transaksi")
