@@ -13,7 +13,8 @@ st.set_page_config(page_title="Input Draft Memo", layout="centered")
 
 # 2. Logo Resmi (Satu baris saja, tidak akan double, otomatis di atas)
 # Pastikan file logo.png ada di folder yang sama dengan app.py
-st.image("logo.png", use_container_width=True)
+with st.container():
+    st.image("logo.png", use_container_width=True)
 
 # 3. Judul
 st.title("Input Data Memo Transaksi")
