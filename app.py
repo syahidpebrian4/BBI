@@ -91,10 +91,9 @@ if submitted:
         ws['F22'] = lokasi_transaksi
         ws['F23'] = str(rencana_transaksi)
 
-        
-        # Format angka di Excel
-        for cell in ['G19', 'G20', 'G21']:
+       for cell in ['G19', 'G20', 'G21']:
             ws[cell].number_format = '#,##0'
+            ws[cell].alignment = Alignment(horizontal='left')
             
         output = BytesIO()
         wb.save(output)
