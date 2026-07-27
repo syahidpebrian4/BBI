@@ -148,7 +148,7 @@ def generate_no_lapas(sheet):
 # ==========================================
 if st.session_state.selected_category is None:
     st.markdown('<div class="main-title">Document Generator System</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Pilih modul dokumen yang ingin kamu proses hari ini</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">Pilih Jenis Dokumen yang Akan Dibuat</div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2, gap="large")
 
