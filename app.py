@@ -5,9 +5,20 @@ from io import BytesIO
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import base64
+import os
 
 # --- CONFIG ---
 st.set_page_config(page_title="Draft Memo & Surat Generator", layout="wide")
+
+# --- FUNGSI LOAD GAMBAR KE BASE64 ---
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return ""
+
+logo_base64 = get_base64_image("lsi_logo.png")
 
 # --- INISIALISASI SESSION STATE ---
 if 'selected_category' not in st.session_state:
@@ -19,28 +30,56 @@ if 'excel_buffer' not in st.session_state:
 if 'file_name' not in st.session_state: 
     st.session_state.file_name = None
 
-# --- CUSTOM CSS (Dominan Merah Elegant & Modern UI) ---
-st.markdown("""
+# --- CUSTOM CSS (Fixed Header Logo & Dominan Merah Elegant) ---
+st.markdown(f"""
     <style>
+    /* Fixed Top Header Bar */
+    .fixed-header {{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 2px solid #fee2e2;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        padding-left: 40px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }}
+
+    .fixed-header img {{
+        height: 45px;
+        width: auto;
+        object-fit: contain;
+    }}
+
+    /* Jarak teratas agar konten tidak tertutup fixed header */
+    .block-container {{
+        padding-top: 90px !important;
+    }}
+
     /* Styling Header / Title */
-    .main-title {
+    .main-title {{
         text-align: center;
         font-size: 32px;
         font-weight: 800;
         color: #b91c1c;
         margin-bottom: 4px;
         letter-spacing: -0.5px;
-    }
+    }}
     
-    .sub-title {
+    .sub-title {{
         text-align: center;
         font-size: 15px;
         color: #64748b;
         margin-bottom: 35px;
-    }
+    }}
 
     /* Styling Card Utama */
-    .custom-card {
+    .custom-card {{
         background: #ffffff;
         border: 1px solid #fee2e2;
         border-radius: 16px;
@@ -49,10 +88,10 @@ st.markdown("""
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
-    }
+    }}
     
     /* Garis Aksen Kiri / Accent Bar */
-    .custom-card::before {
+    .custom-card::before {{
         content: '';
         position: absolute;
         top: 0;
@@ -60,10 +99,10 @@ st.markdown("""
         width: 6px;
         height: 100%;
         background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
-    }
+    }}
 
     /* Tag / Pill Badge */
-    .card-tag {
+    .card-tag {{
         display: inline-block;
         background-color: #fef2f2;
         color: #991b1b;
@@ -75,24 +114,24 @@ st.markdown("""
         text-transform: uppercase;
         letter-spacing: 0.5px;
         border: 1px solid #fecaca;
-    }
+    }}
 
-    .card-h2 {
+    .card-h2 {{
         font-size: 22px;
         font-weight: 700;
         color: #0f172a;
         margin-bottom: 8px;
-    }
+    }}
 
-    .card-p {
+    .card-p {{
         font-size: 14px;
         color: #475569;
         line-height: 1.5;
         margin-bottom: 20px;
-    }
+    }}
 
     /* Custom Styling Tombol Streamlit Utama */
-    div.stButton > button {
+    div.stButton > button {{
         background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
         color: white !important;
         border: none !important;
@@ -101,14 +140,19 @@ st.markdown("""
         padding: 10px 20px !important;
         box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25) !important;
         transition: all 0.2s ease !important;
-    }
+    }}
 
-    div.stButton > button:hover {
+    div.stButton > button:hover {{
         background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%) !important;
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35) !important;
-    }
+    }}
     </style>
+
+    <!-- HTML Fixed Header -->
+    <div class="fixed-header">
+        {"<img src='data:image/png;base64," + logo_base64 + "' alt='LSI Logo'/>" if logo_base64 else "<strong style='color:#b91c1c;'>LSI LOGO</strong>"}
+    </div>
 """, unsafe_allow_html=True)
 
 # --- FUNGSI LOGIKA NOMOR ---
