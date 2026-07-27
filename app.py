@@ -321,7 +321,7 @@ else:
                 ws['B7'] = f': {lampiran} halaman'
                 ws['B7'].alignment = Alignment(horizontal='left')
                 
-                ws['C10'] = instansi
+                ws['C10'] = f"{instansi} "
 
                 no_memo = no_surat
                 file_prefix = "Draft LAPAS"
