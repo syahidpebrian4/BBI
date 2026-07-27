@@ -119,7 +119,7 @@ if submitted:
             sheet = spreadsheet.worksheet("LAPAS")
             new_no, no_surat = generate_no_lapas(sheet)
 
-            # Append ke Google Sheets (Sesuai header: No, Tanggal, No Surat, Instansi, Lampiran)
+            # Append ke Google Sheets
             row_data = [new_no, str(tanggal_input), no_surat, instansi, lampiran]
             sheet.append_row(row_data)
 
@@ -133,11 +133,11 @@ if submitted:
             ws['L6'] = str_tanggal
             ws['L6'].alignment = Alignment(horizontal='right')
             
-            ws['A6'] = f': {no_surat}'
-            ws['A6'].alignment = Alignment(horizontal='left')
+            ws['B6'] = f': {no_surat}'
+            ws['B6'].alignment = Alignment(horizontal='left')
             
-            ws['A7'] = f': {lampiran} halaman'
-            ws['A7'].alignment = Alignment(horizontal='left')
+            ws['B7'] = f': {lampiran} halaman'
+            ws['B7'].alignment = Alignment(horizontal='left')
             
             ws['C10'] = instansi
 
