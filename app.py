@@ -19,72 +19,94 @@ if 'excel_buffer' not in st.session_state:
 if 'file_name' not in st.session_state: 
     st.session_state.file_name = None
 
-# --- CUSTOM CSS (Tema Merah & Biru Soft / Slate Modern) ---
+# --- CUSTOM CSS (Dominan Merah Elegant & Modern UI) ---
 st.markdown("""
     <style>
-    /* Styling Container Card */
-    .card-container {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border-radius: 16px;
-        padding: 30px 20px;
+    /* Styling Header / Title */
+    .main-title {
         text-align: center;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        font-size: 32px;
+        font-weight: 800;
+        color: #b91c1c;
+        margin-bottom: 4px;
+        letter-spacing: -0.5px;
+    }
+    
+    .sub-title {
+        text-align: center;
+        font-size: 15px;
+        color: #64748b;
+        margin-bottom: 35px;
+    }
+
+    /* Styling Card Utama */
+    .custom-card {
+        background: #ffffff;
+        border: 1px solid #fee2e2;
+        border-radius: 16px;
+        padding: 28px 24px;
+        box-shadow: 0 10px 25px -5px rgba(185, 28, 28, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Garis Aksen Kiri / Accent Bar */
+    .custom-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 6px;
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    
-    .card-bbi {
-        border-top: 5px solid #3b82f6; /* Soft Blue accent */
-    }
-    
-    .card-lapas {
-        border-top: 5px solid #ef4444; /* Soft Red accent */
+        background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
     }
 
-    .card-icon {
-        font-size: 50px;
-        margin-bottom: 15px;
-    }
-    
-    .card-title {
-        font-size: 24px;
+    /* Tag / Pill Badge */
+    .card-tag {
+        display: inline-block;
+        background-color: #fef2f2;
+        color: #991b1b;
+        font-size: 11px;
         font-weight: 700;
-        color: #f8fafc;
-        margin-bottom: 10px;
-    }
-    
-    .card-desc {
-        font-size: 14px;
-        color: #94a3b8;
-        margin-bottom: 25px;
-        min-height: 40px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid #fecaca;
     }
 
-    .badge-container {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
+    .card-h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+
+    .card-p {
+        font-size: 14px;
+        color: #475569;
+        line-height: 1.5;
         margin-bottom: 20px;
     }
 
-    .badge {
-        background-color: rgba(255, 255, 255, 0.08);
-        color: #cbd5e1;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
+    /* Custom Styling Tombol Streamlit Utama */
+    div.stButton > button {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        padding: 10px 20px !important;
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25) !important;
+        transition: all 0.2s ease !important;
     }
 
-    /* Override tombol Streamlit agar menyatu dengan card */
-    div.stButton > button {
-        width: 100%;
-        border-radius: 8px;
-        font-weight: 600;
-        padding: 10px 16px;
-        transition: all 0.2s ease;
+    div.stButton > button:hover {
+        background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35) !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -122,52 +144,40 @@ def generate_no_lapas(sheet):
 
 
 # ==========================================
-# 1. TAMPILAN DASHBOARD UTAMA (PILIHAN CARD)
+# 1. TAMPILAN DASHBOARD UTAMA (LANDING PAGE)
 # ==========================================
 if st.session_state.selected_category is None:
-    st.markdown("<h1 style='text-align: center; color: #f8fafc;'>Document Dashboard</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #94a3b8; margin-bottom: 40px;'>Pilih jenis dokumen yang ingin dibuat</p>", unsafe_allow_html=True)
+    st.markdown('<div class="main-title">Document Generator System</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">Pilih modul dokumen yang ingin kamu proses hari ini</div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2, gap="large")
 
-    # CARD BBI (Aksen Biru)
+    # CARD BBI
     with col1:
         st.markdown("""
-            <div class="card-container card-bbi">
-                <div>
-                    <div class="card-icon">📄</div>
-                    <div class="card-title">Draft Memo BBI</div>
-                    <div class="card-desc">Pembuatan draft memo transaksi internal BBI lengkap dengan rincian PO dan harga.</div>
-                    <div class="badge-container">
-                        <span class="badge">Memo</span>
-                        <span class="badge">BBI</span>
-                        <span class="badge">PO</span>
-                    </div>
-                </div>
+            <div class="custom-card">
+                <span class="card-tag">INTERNAL MEMO</span>
+                <div class="card-h2">Draft Memo BBI</div>
+                <div class="card-p">Modul pembuatan memo transaksi internal BBI lengkap dengan otomatisasi nomor memo, rincian PO, dan breakdown total transfer.</div>
             </div>
         """, unsafe_allow_html=True)
-        if st.button("📄 Buka Draft Memo BBI", key="btn_bbi", use_container_width=True):
+        st.write("")
+        if st.button("Buat Memo BBI ➔", key="btn_bbi", use_container_width=True):
             st.session_state.selected_category = "BBI"
             st.session_state.memo_data = None
             st.rerun()
 
-    # CARD LAPAS (Aksen Merah)
+    # CARD LAPAS
     with col2:
         st.markdown("""
-            <div class="card-container card-lapas">
-                <div>
-                    <div class="card-icon">🏷️</div>
-                    <div class="card-title">Draft Surat LAPAS</div>
-                    <div class="card-desc">Pembuatan draft surat penawaran harga barang resmi untuk instansi LAPAS.</div>
-                    <div class="badge-container">
-                        <span class="badge">Surat</span>
-                        <span class="badge">LAPAS</span>
-                        <span class="badge">Penawaran</span>
-                    </div>
-                </div>
+            <div class="custom-card">
+                <span class="card-tag">SURAT PENAWARAN</span>
+                <div class="card-h2">Draft Surat LAPAS</div>
+                <div class="card-p">Modul pembuatan surat penawaran harga barang resmi untuk instansi LAPAS dengan otomatisasi penomoran surat dan lampiran.</div>
             </div>
         """, unsafe_allow_html=True)
-        if st.button("🏷️ Buka Draft Surat LAPAS", key="btn_lapas", use_container_width=True):
+        st.write("")
+        if st.button("Buat Surat LAPAS ➔", key="btn_lapas", use_container_width=True):
             st.session_state.selected_category = "LAPAS"
             st.session_state.memo_data = None
             st.rerun()
@@ -237,7 +247,7 @@ else:
                 row_data = [new_no, str(tanggal_input), no_memo, no_po, jml_artikel, harga_jual, biaya_delivery, total_transfer, lokasi_transaksi, str(rencana_transaksi)]
                 sheet.append_row(row_data)
                 
-                # Process Excel
+                # Process Excel Template
                 wb = openpyxl.load_workbook("Draft_Memo_Template.xlsx")
                 ws = wb.active
 
