@@ -158,7 +158,6 @@ if st.session_state.selected_category is None:
             <div class="custom-card">
                 <span class="card-tag">INTERNAL MEMO</span>
                 <div class="card-h2">Draft Memo BBI</div>
-                <div class="card-p">Modul pembuatan memo transaksi internal BBI lengkap dengan otomatisasi nomor memo, rincian PO, dan breakdown total transfer.</div>
             </div>
         """, unsafe_allow_html=True)
         st.write("")
@@ -173,7 +172,6 @@ if st.session_state.selected_category is None:
             <div class="custom-card">
                 <span class="card-tag">SURAT PENAWARAN</span>
                 <div class="card-h2">Draft Surat LAPAS</div>
-                <div class="card-p">Modul pembuatan surat penawaran harga barang resmi untuk instansi LAPAS dengan otomatisasi penomoran surat dan lampiran.</div>
             </div>
         """, unsafe_allow_html=True)
         st.write("")
